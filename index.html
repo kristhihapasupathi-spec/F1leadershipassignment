@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Formula 1 — A Case Study in Leadership &amp; Teamwork</title>
+<style>
+  :root{
+    --red:#e10600;
+    --ink:#0a0a0f;
+    --paper:#f4f3ef;
+    --muted:#9a9aa5;
+    --line:rgba(255,255,255,.16);
+    --maxw:1080px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--ink);
+    color:var(--paper);
+    line-height:1.65;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{line-height:1.08;letter-spacing:-.02em;font-weight:800}
+
+  /* ---------- Scroll progress ---------- */
+  #progress{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:var(--red);z-index:100;transition:width .1s linear;
+    box-shadow:0 0 12px rgba(225,6,0,.8);
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:90;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(20px,5vw,60px);
+    background:linear-gradient(to bottom,rgba(10,10,15,.92),transparent);
+    transition:background .4s var(--ease);
+  }
+  nav.solid{background:rgba(10,10,15,.96);border-bottom:1px solid var(--line)}
+  nav .brand{font-weight:800;letter-spacing:.18em;font-size:14px;text-transform:uppercase}
+  nav .brand b{color:var(--red)}
+  nav .links{display:flex;gap:26px}
+  nav .links a{
+    color:var(--paper);text-decoration:none;font-size:13px;letter-spacing:.05em;
+    opacity:.78;transition:opacity .25s,color .25s;text-transform:uppercase;
+  }
+  nav .links a:hover{opacity:1;color:var(--red)}
+  @media(max-width:820px){nav .links{display:none} #nav-toggle{display:block}} 
+  #nav-toggle{display:none;background:transparent;border:0;color:var(--paper);font-size:22px;cursor:pointer;padding:6px 10px;border-radius:6px}
+  nav.open .links{display:flex;flex-direction:column;position:fixed;top:64px;right:18px;background:rgba(6,6,10,.96);padding:12px;border-radius:10px;border:1px solid var(--line);z-index:95}
+  nav.open .links a{display:block;padding:8px 10px}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;height:100vh;min-height:600px;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .hero::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:radial-gradient(circle at 50% 40%,rgba(10,10,15,.3),rgba(10,10,15,.88) 92%);
+  }
+  .hero-inner{position:relative;z-index:2;text-align:center;padding:0 20px;max-width:900px;animation:rise 1.2s var(--ease) both}
+  .hero .eyebrow{color:var(--red);letter-spacing:.4em;font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:22px}
+  .hero h1{font-size:clamp(2.6rem,8vw,6.2rem);text-transform:uppercase;text-shadow:0 4px 40px rgba(0,0,0,.85)}
+  .hero h1 span{color:var(--red)}
+  .hero p{margin:22px auto 0;font-size:clamp(1rem,2vw,1.3rem);color:#e2e2e8;max-width:640px;font-weight:300;text-shadow:0 2px 16px rgba(0,0,0,.9)}
+  .scroll-cue{
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:2;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:#c8c8d2;font-size:11px;letter-spacing:.25em;text-transform:uppercase;animation:bob 2s infinite;
+  }
+  .scroll-cue .arrow{width:20px;height:20px;border-right:2px solid #c8c8d2;border-bottom:2px solid #c8c8d2;transform:rotate(45deg)}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,10px)}}
+  @keyframes rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+
+  /* ---------- Section shell ---------- */
+  section{padding:clamp(80px,13vh,150px) clamp(20px,5vw,60px);position:relative;overflow:hidden}
+  .wrap{max-width:var(--maxw);margin:0 auto;position:relative;z-index:3}
+
+  /* --- Media-backed sections: layer 0 = media, layer 1 = scrim, layer 3 = content --- */
+  .media-sec .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+  .media-sec .bg img,
+  .media-sec .bg video{width:100%;height:100%;object-fit:cover;display:block}
+  /* Strong, readable scrim: dark base + directional gradient */
+  .media-sec::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:
+      linear-gradient(90deg,rgba(8,8,12,.94) 0%,rgba(8,8,12,.82) 45%,rgba(8,8,12,.55) 100%),
+      linear-gradient(to bottom,rgba(8,8,12,.85),rgba(8,8,12,.55) 40%,rgba(8,8,12,.9));
+  }
+  /* Slightly lighter scrim variant where the art should breathe more */
+  .media-sec.soft::before{
+    background:
+      linear-gradient(90deg,rgba(8,8,12,.92) 0%,rgba(8,8,12,.74) 50%,rgba(8,8,12,.42) 100%),
+      linear-gradient(to bottom,rgba(8,8,12,.8),rgba(8,8,12,.45) 45%,rgba(8,8,12,.88));
+  }
+  .media-sec .wrap{text-shadow:0 2px 18px rgba(0,0,0,.75)}
+  /* Constrain copy so it sits on the darkest part of the scrim */
+  .media-sec .col{max-width:660px}
+
+  /* Ken Burns zoom in/out for Building the Team */
+  @keyframes kenburns{
+    0%   {transform:scale(1.06)}
+    50%  {transform:scale(1.24)}
+    100% {transform:scale(1.06)}
+  }
+  .bg.zoom img{animation:kenburns 22s ease-in-out infinite;transform-origin:center center;filter:brightness(1.18) contrast(1.06)}
+  @media(prefers-reduced-motion:reduce){.bg.zoom img{animation:none}}
+
+  .band-dark{background:var(--ink)}
+  .band-alt{background:#101017}
+
+  .kicker{
+    color:var(--red);font-weight:700;letter-spacing:.28em;font-size:12.5px;
+    text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;
+  }
+  .kicker::before{content:"";width:34px;height:2px;background:var(--red)}
+  h2.section-title{font-size:clamp(1.9rem,4.6vw,3.2rem);margin-bottom:22px;max-width:17ch}
+  .lead{font-size:clamp(1.05rem,1.8vw,1.28rem);color:#e0e0e7;font-weight:300;max-width:60ch;margin-bottom:18px}
+  p.body{color:#cbcbd5;max-width:58ch;margin-bottom:16px}
+  p.body b, .lead b{color:#fff}
+
+  /* ---------- Reveal ---------- */
+  .reveal{opacity:0;transform:translateY(46px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.12s}
+  .reveal.d2{transition-delay:.24s}
+  .reveal.d3{transition-delay:.36s}
+
+  /* ---------- Quote ---------- */
+  .quote-block{border-left:3px solid var(--red);padding:6px 0 6px 28px;margin:34px 0;max-width:58ch}
+  .quote-block p{font-size:clamp(1.15rem,2.3vw,1.6rem);font-weight:300;font-style:italic;color:#fff;line-height:1.42}
+  .quote-block cite{display:block;margin-top:14px;font-style:normal;font-size:13px;letter-spacing:.06em;color:#b4b4c0}
+  .quote-block cite b{color:#fff}
+
+  /* ---------- Cards / panels (glass so text stays legible on art) ---------- */
+  .panel{
+    background:rgba(12,12,18,.72);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:14px;
+  }
+  .contrast{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:26px}
+  @media(max-width:780px){.contrast{grid-template-columns:1fr}}
+  .card{padding:30px 26px}
+  .card.new{background:linear-gradient(160deg,rgba(225,6,0,.24),rgba(12,12,18,.75));border-color:rgba(225,6,0,.5)}
+  .card .tag{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#a9a9b6;font-weight:700}
+  .card.new .tag{color:#ff5c56}
+  .card h3{font-size:1.3rem;margin:8px 0 16px}
+  .card ul{list-style:none}
+  .card li{position:relative;padding-left:24px;margin-bottom:12px;font-size:14.5px;color:#d2d2db}
+  .card li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+
+  /* ---------- Pillars ---------- */
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:30px}
+  .pillar{padding:24px 22px;transition:transform .35s var(--ease),border-color .35s}
+  .pillar:hover{transform:translateY(-6px);border-color:var(--red)}
+  .pillar .num{font-size:14px;font-weight:800;color:var(--red);letter-spacing:.1em}
+  .pillar h3{font-size:1.1rem;margin:10px 0 8px}
+  .pillar p{font-size:13.5px;color:#c3c3ce}
+
+  /* ---------- Stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:30px}
+  @media(max-width:780px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{padding:26px 16px;text-align:center;transition:border-color .3s,transform .3s}
+  .stat:hover{border-color:var(--red);transform:translateY(-4px)}
+  .stat .n{font-size:clamp(1.7rem,3.8vw,2.6rem);font-weight:800;color:var(--red);line-height:1}
+  .stat .l{margin-top:10px;font-size:12px;letter-spacing:.05em;color:#d0d0da;text-transform:uppercase}
+
+  /* ---------- Vimeo ---------- */
+  .video-frame{position:relative;padding-top:56.25%;border-radius:14px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.7);border:1px solid var(--line);margin-top:8px}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  /* ---------- Banner sections (heritage / closing) ---------- */
+  .banner{position:relative;min-height:72vh;display:flex;align-items:flex-end;padding:0;overflow:hidden}
+  .banner .bg{position:absolute;inset:0;z-index:0}
+  .banner .bg img{width:100%;height:100%;object-fit:cover;display:block}
+  .banner::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(90deg,rgba(8,8,12,.93),rgba(8,8,12,.6) 55%,rgba(8,8,12,.25));
+  }
+  .banner .b-txt{position:relative;z-index:3;padding:clamp(34px,6vw,74px);max-width:680px;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+
+  /* ---------- Takeaways: text left, image right ---------- */
+  .takeaway-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,5vw,64px);align-items:start}
+  @media(max-width:900px){.takeaway-grid{grid-template-columns:1fr}}
+  .takeaway-img{position:sticky;top:110px;border-radius:16px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.6);border:1px solid var(--line)}
+  .takeaway-img img{display:block;width:100%;height:100%;max-height:70vh;object-fit:cover}
+  @media(max-width:900px){.takeaway-img{position:static;max-height:340px}.takeaway-img img{max-height:340px}}
+
+  /* Turnaround: use inline image within .bg (relative path) */
+  #turnaround{position:relative}
+  /* ensure content sits above scrim */
+  #turnaround .wrap{position:relative;z-index:3}
+  @media(max-width:900px){ #turnaround .bg img{object-position:top center} }
+
+  /* Tabs for The Turnaround */
+  .tabs{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+  .tab-btn{background:transparent;border:1px solid rgba(255,255,255,.06);color:var(--paper);padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}
+  .tab-btn[aria-selected="true"]{background:var(--red);color:#fff;border-color:var(--red)}
+  .tab-btn:focus{outline:2px solid rgba(225,6,0,.22);outline-offset:2px}
+  .tab-panels{margin-top:22px}
+  .tab-panel{background:rgba(12,12,18,.54);padding:18px;border-radius:12px;border:1px solid var(--line)}
+  .tab-panel p{color:#dcdce2}
+  @media(max-width:900px){.tabs{gap:8px}.tab-btn{padding:8px 10px}}
+
+
+  .lessons{counter-reset:l}
+  .lesson{display:flex;gap:20px;padding:24px 0;border-top:1px solid var(--line)}
+  .lesson::before{counter-increment:l;content:counter(l,decimal-leading-zero);font-size:1.35rem;font-weight:800;color:var(--red);min-width:48px}
+  .lesson h3{font-size:1.15rem;margin-bottom:6px}
+  .lesson p{font-size:14.5px;color:#c0c0ca;max-width:56ch}
+
+  /* ---------- Footer ---------- */
+  footer{padding:60px clamp(20px,5vw,60px);border-top:1px solid var(--line);text-align:center;background:var(--ink)}
+  footer .brand{font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+  footer p{color:var(--muted);font-size:13px;max-width:62ch;margin:0 auto 8px}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <div class="brand"><b>F1</b> · Leadership &amp; Teamwork</div>
+    <button id="nav-toggle" aria-expanded="false" aria-label="Menu" aria-controls="nav-links">☰</button>
+  <div class="links" id="nav-links">
+    <a href="#turnaround">Turnaround</a>
+    <a href="#team">The Team</a>
+    <a href="#pitstop">Teamwork</a>
+    <a href="#compete">Competition</a>
+    <a href="#lessons">Lessons</a>
+  </div>
+</nav>
+<script>
+  // Mobile nav toggle
+  (function(){
+    const nav = document.getElementById('nav');
+    const btn = document.getElementById('nav-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', (e)=>{
+      const open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', (e)=>{
+      if (!nav.contains(e.target) && e.target !== btn){ nav.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+    });
+  })();
+</script>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <video autoplay muted loop playsinline poster="media/wheel-to-wheel.jpg">
+    <source src="media/hero.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-inner">
+    <div class="eyebrow">MIT Sloan Case · Leadership &amp; Teamwork</div>
+    <h1>Unleashing the <span>Greatest</span> Spectacle</h1>
+    <p>How new leadership turned Formula 1 from a one-man empire into a fan-first team sport — a study in vision, trust, and collaboration at 370 km/h.</p>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><span class="arrow"></span></div>
+</header>
+
+<!-- ============ THE TURNAROUND — bg: pitstop ============ -->
+<section id="turnaround" class="media-sec">
+  <div class="bg"><img src="media/turnaround.jpg" alt="The Turnaround" onerror="this.style.display='none'" /></div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">The Turnaround</div>
+      <h2 class="section-title reveal">From command-and-control to a shared vision</h2>
+
+      <div class="tabs" role="tablist" aria-label="Turnaround sections">
+        <button class="tab-btn reveal d1" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-overview-btn">From command-and-control to a shared vision</button>
+        <button class="tab-btn reveal d1" role="tab" aria-selected="false" aria-controls="tab-old" id="tab-old-btn">The Old Model</button>
+        <button class="tab-btn reveal d1" role="tab" aria-selected="false" aria-controls="tab-new" id="tab-new-btn">The New Model</button>
+      </div>
+
+      <div class="tab-panels">
+        <div id="tab-overview" class="tab-panel reveal d1" role="tabpanel" aria-labelledby="tab-overview-btn">
+          <p class="lead">For nearly 40 years, Formula 1 was run under the tight, opaque control of a single dealmaker. When Liberty Media acquired the sport in 2016, Chase Carey, Sean Bratches, and Ross Brawn inherited a profitable business with almost no infrastructure behind it — and a clear leadership question: how do you change a culture that had stood still for decades?</p>
+          <div class="quote-block reveal d1">
+            <p>“The organization wasn’t doing the things you needed to do to compete… It was run for short-term cash flow.”</p>
+            <cite>— <b>Chase Carey</b>, CEO, Formula 1</cite>
+          </div>
+        </div>
+
+        <div id="tab-old" class="tab-panel reveal d1" role="tabpanel" aria-labelledby="tab-old-btn" hidden>
+          <div class="card panel old">
+            <div class="tag">The Old Model</div>
+            <h3>One person, all the decisions</h3>
+            <ul>
+              <li>Chaotic, opaque decision-making</li>
+              <li>Fractious relationships, little trust</li>
+              <li>No marketing, research, or digital function</li>
+              <li>Dismissed younger fans and new ideas</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="tab-new" class="tab-panel reveal d2" role="tabpanel" aria-labelledby="tab-new-btn" hidden>
+          <div class="card panel new">
+            <div class="tag">The New Model</div>
+            <h3>A leadership team with a mandate</h3>
+            <ul>
+              <li>Clear roles: commercial, brand, motorsport</li>
+              <li>Transparency and feedback with the teams</li>
+              <li>Formal functions built from scratch</li>
+              <li>Evidence-based decisions, freedom to experiment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUILDING THE TEAM — bg: SF90, zooming ============ -->
+<section id="team" class="media-sec soft">
+  <div class="bg zoom"><img src="media/sf90.jpg" alt="" /></div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">Building the Team</div>
+      <h2 class="section-title reveal">Hire fresh thinking — but keep the memory of the house</h2>
+      <p class="body reveal d1">The new leaders brought in outsiders from media, tech, and even rugby to build functions that never existed. But they deliberately <b>retained</b> long-serving staff who held institutional knowledge and key relationships. New units were given freedom to experiment. Internally, they called themselves a <b>“40-year-old startup.”</b></p>
+      <p class="body reveal d2">Before hiring, the trio aligned everyone behind five shared pillars — a simple, common language that let independent teams pull in the same direction.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar panel reveal"><div class="num">01</div><h3>Better &amp; Healthier</h3><p>Improve competition on track and rebuild trust with teams through transparency.</p></div>
+      <div class="pillar panel reveal d1"><div class="num">02</div><h3>Upgrade Events</h3><p>Turn decades-old race weekends into genuine spectacles.</p></div>
+      <div class="pillar panel reveal d2"><div class="num">03</div><h3>Engage Fans</h3><p>Meet fans on traditional and digital platforms alike.</p></div>
+      <div class="pillar panel reveal d1"><div class="num">04</div><h3>Expand the Brand</h3><p>Esports, festivals, and new ways to connect beyond the race.</p></div>
+      <div class="pillar panel reveal d2"><div class="num">05</div><h3>Grow the Footprint</h3><p>Broaden globally, with focus on the US and China.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAMWORK UNDER PRESSURE — bg: Monaco hairpin ============ -->
+<section id="pitstop" class="media-sec">
+  <div class="bg"><img src="media/pitstop.jpg" alt="" onerror="this.style.display='none'" /></div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">Teamwork Under Pressure</div>
+      <h2 class="section-title reveal">Two seconds. Twenty people. One flawless act.</h2>
+      <p class="lead reveal d1">Nowhere is teamwork more visible than the pit stop — a rehearsed, wordless choreography where a single hesitation costs a race. Behind every driver sit up to 60 trackside engineers and technicians, plus dozens more at the factory, all acting on the same live data in real time.</p>
+    </div>
+    <!-- video removed; section uses pitstop.jpg as the background image -->
+    <div class="stats">
+      <div class="stat panel reveal"><div class="n">~60</div><div class="l">Engineers trackside</div></div>
+      <div class="stat panel reveal d1"><div class="n">500&nbsp;GB</div><div class="l">Data per car, per weekend</div></div>
+      <div class="stat panel reveal d2"><div class="n">200</div><div class="l">Sensors on every car</div></div>
+      <div class="stat panel reveal d3"><div class="n">1</div><div class="l">Shared goal</div></div>
+    </div>
+    <div class="col">
+      <div class="quote-block reveal d1">
+        <p>“As the sportsmen drive on the track, you’ve got brilliant mathematicians in the background having their own race… the drivers are dependent on them.”</p>
+        <cite>— <b>James Allen</b>, President, Motorsport Network</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HEALTHY COMPETITION — bg: wheel to wheel ============ -->
+<section id="compete" class="media-sec soft">
+  <div class="bg"><img src="media/wheel-to-wheel.jpg" alt="" /></div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">Healthy Competition</div>
+      <h2 class="section-title reveal">Rivalry that raises everyone</h2>
+      <p class="body reveal d1">Great leaders don’t remove competition — they design it to be fair. For four seasons the three richest teams dominated, and true wheel-to-wheel racing grew rare. So Formula 1, the FIA, and the teams negotiated a <b>$175m budget cap</b> and new car rules to level the field.</p>
+      <p class="body reveal d2">The insight was cultural, not just technical: as Bratches put it, <em>“competition elevates engagement.”</em> A stronger contest makes every stakeholder — teams, sponsors, broadcasters, fans — better off.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENGINEERING AS COLLABORATION — bg: video ============ -->
+<section class="media-sec">
+  <div class="bg">
+    <video autoplay muted loop playsinline poster="media/front-wing.jpg">
+      <source src="media/engineering.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">Engineering as Collaboration</div>
+      <h2 class="section-title reveal">Marginal gains, made together</h2>
+      <p class="body reveal d1">A front wing is a thousand small decisions balancing downforce against drag — the product of designers, aerodynamicists, and engineers iterating as one unit. In F1, no individual wins alone; the car is a team’s collective intelligence made physical.</p>
+      <p class="body reveal d2">Every season the car is rebuilt from scratch. That relentless cycle only works when knowledge flows freely across functions rather than pooling in silos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HERITAGE & IDENTITY — bg: Silverstone (unchanged) ============ -->
+<section class="banner">
+  <div class="bg"><img src="media/silverstone.jpg" alt="" /></div>
+  <div class="b-txt reveal">
+    <div class="kicker">Heritage &amp; Identity</div>
+    <h2 class="section-title">Where it began — and why culture endures</h2>
+    <p class="lead">The first World Championship race ran at Silverstone in 1950. Honoring that heritage while daring to modernize is the balancing act every long-standing organization faces.</p>
+  </div>
+</section>
+
+<!-- ============ STRATEGY & TRUST — bg: video ============ -->
+<section class="media-sec">
+  <div class="bg">
+    <video autoplay muted loop playsinline poster="media/hairpin.jpeg" style="filter:brightness(1.18) contrast(1.04)">
+      <source src="media/strategy.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker reveal">Strategy &amp; Trust</div>
+      <h2 class="section-title reveal">Split-second calls, built on shared data</h2>
+      <p class="body reveal d1">Through the tight streets of Monaco, a driver trusts a strategy team they cannot see. When to pit, which tyres, whether to undercut — decisions made by analysts and executed by the driver. It works only when both sides trust the same information and each other’s judgment.</p>
+      <p class="body reveal d2">This is distributed leadership: authority flows to whoever holds the best information at that moment — the essence of a high-performing team.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAKEAWAYS — image on the right ============ -->
+<section id="lessons" class="band-alt">
+  <div class="wrap">
+    <div class="kicker reveal">The Takeaways</div>
+    <h2 class="section-title reveal">Five leadership &amp; teamwork lessons</h2>
+    <div class="takeaway-grid" style="margin-top:34px">
+      <div class="lessons">
+        <div class="lesson reveal">
+          <div>
+            <h3>Set a shared vision before you hire</h3>
+            <p>The five pillars gave every new team member a common direction — alignment first, autonomy second.</p>
+          </div>
+        </div>
+        <div class="lesson reveal">
+          <div>
+            <h3>Blend fresh talent with institutional memory</h3>
+            <p>Outsiders brought new thinking; retained insiders kept the relationships and knowledge that made change possible.</p>
+          </div>
+        </div>
+        <div class="lesson reveal">
+          <div>
+            <h3>Replace control with trust and transparency</h3>
+            <p>Moving from a one-person empire to open, evidence-based decisions unlocked initiative across the organization.</p>
+          </div>
+        </div>
+        <div class="lesson reveal">
+          <div>
+            <h3>Great teamwork is rehearsed, not improvised</h3>
+            <p>The two-second pit stop is proof: elite teams turn preparation and shared data into flawless execution under pressure.</p>
+          </div>
+        </div>
+        <div class="lesson reveal">
+          <div>
+            <h3>Design competition to lift the whole system</h3>
+            <p>A fair contest — budget caps, better rules — serves teams, partners, and fans alike. Competition elevates engagement.</p>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway-img reveal d1">
+        <img src="media/hairpin.jpeg" alt="Monaco hairpin, the full field in sequence" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE INFLECTION POINT — bg: ending (unchanged) ============ -->
+<section class="banner">
+  <div class="bg"><img src="media/ending.jpeg" alt="" /></div>
+  <div class="b-txt reveal">
+    <div class="kicker">The Inflection Point</div>
+    <h2 class="section-title">“If everything worked exactly as planned, you’re not doing enough.”</h2>
+    <p class="lead">Carey’s restlessness captures the mindset of adaptive leadership — always one lap ahead of complacency.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Formula 1 · Leadership &amp; Teamwork</div>
+  <p>A visual case study adapted from “Formula 1: Unleashing the Greatest Racing Spectacle on the Planet,” Ben Shields &amp; Cate Reavis, MIT Sloan (2020).</p>
+  <p>Prepared for academic discussion. Imagery and footage used for educational purposes.</p>
+</footer>
+
+<script>
+  const bar = document.getElementById('progress');
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+    nav.classList.toggle('solid', h.scrollTop > 60);
+  }, {passive:true});
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15, rootMargin:'0px 0px -60px 0px'});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Pause background videos when off-screen (saves CPU on long scrolls)
+  const vIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const v = e.target;
+      if (e.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); }
+    });
+  }, {threshold:0.05});
+  document.querySelectorAll('.media-sec .bg video').forEach(v => vIo.observe(v));
+
+  // Tabs in The Turnaround: basic accessible behavior (click + keyboard)
+  (function(){
+    const tabBtns = Array.from(document.querySelectorAll('#turnaround .tab-btn'));
+    const panels = Array.from(document.querySelectorAll('#turnaround .tab-panel'));
+    if (!tabBtns.length) return;
+    function activate(idx){
+      tabBtns.forEach((b,i)=>{
+        const sel = i===idx;
+        b.setAttribute('aria-selected', sel ? 'true' : 'false');
+        panels[i].hidden = !sel;
+      });
+      tabBtns[idx].focus();
+    }
+    tabBtns.forEach((btn, i)=>{
+      btn.addEventListener('click', ()=> activate(i));
+      btn.addEventListener('keydown', (e)=>{
+        if (e.key === 'ArrowRight') { e.preventDefault(); activate((i+1)%tabBtns.length); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); activate((i-1+tabBtns.length)%tabBtns.length); }
+      });
+    });
+  })();
+</script>
+</body>
+</html>
