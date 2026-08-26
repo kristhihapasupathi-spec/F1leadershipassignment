@@ -470,15 +470,15 @@
 </section>
 
 <!-- ============ HEALTHY COMPETITION — bg: wheel to wheel ============ -->
-<section id="compete" class="media-sec soft">
-  <div class="bg"><img src="media/wheel-to-wheel.jpg" alt="" /></div>
+<section id="compete" class="media-sec soft" style="background: linear-gradient(rgba(6,6,10,0.25), rgba(6,6,10,0.38));">
+  <div class="bg"><img src="media/wheel-to-wheel.jpg" alt="" style="filter:brightness(1.55) contrast(1.1) saturate(1.08);" /></div>
   <div class="wrap">
-    <div class="col">
-      <div class="kicker reveal">Main Issue · 2/3 — Incentive Redesign</div>
-      <h2 class="section-title reveal">Rivalry that raises everyone</h2>
-      <p class="body reveal d1">Three richest teams dominated for four seasons. F1, the FIA, and the teams negotiated a <b>$175m budget cap</b> to level the field.</p>
-      <p class="body reveal d2">Unlimited spending rewarded budget size over racecraft — a classic <b>misaligned-incentive</b> problem.</p>
-      <p class="body reveal d2"><em>“Competition elevates engagement.”</em> — Sean Bratches</p>
+    <div class="col" style="max-width:760px;">
+      <div class="kicker reveal" style="color:#ff4040; font-size:15px; text-shadow:0 2px 14px rgba(0,0,0,0.95); letter-spacing:0.06em;">Main Issue · 2/3 — Incentive Redesign</div>
+      <h2 class="section-title reveal" style="color:#ffffff; font-size:clamp(2.4rem, 4.6vw, 3.6rem); text-shadow:0 4px 24px rgba(0,0,0,0.98), 0 2px 8px rgba(0,0,0,0.95), 0 0 40px rgba(255,255,255,0.12); letter-spacing:0.02em;">Rivalry that raises everyone</h2>
+      <p class="body reveal d1" style="color:#f8f8fc; font-size:1.35rem; line-height:1.7; text-shadow:0 3px 16px rgba(0,0,0,0.95); background:rgba(8,8,14,0.55); padding:14px 18px; border-radius:8px; border-left:4px solid #e10600;">Three richest teams dominated for four seasons. F1, the FIA, and the teams negotiated a <b style="color:#ffb400; text-shadow:0 0 12px rgba(255,180,0,0.5);">$175m budget cap</b> to level the field.</p>
+      <p class="body reveal d2" style="color:#f8f8fc; font-size:1.35rem; line-height:1.7; text-shadow:0 3px 16px rgba(0,0,0,0.95); background:rgba(8,8,14,0.55); padding:14px 18px; border-radius:8px; border-left:4px solid #ffb400;">Unlimited spending rewarded budget size over racecraft — a classic <b style="color:#ffb400; text-shadow:0 0 12px rgba(255,180,0,0.5);">misaligned-incentive</b> problem.</p>
+      <p class=”body reveal d2” style=”color:#ffffff; font-size:1.35rem; line-height:1.65; text-shadow:0 3px 18px rgba(0,0,0,0.95); font-style:italic; letter-spacing:0.01em;”><em>”Competition elevates engagement.”</em> — <b style=”color:#ffb400; text-shadow:0 0 14px rgba(255,180,0,0.6);”>Sean Bratches</b></p>
     </div>
   </div>
 </section>
@@ -703,21 +703,10 @@
 </section>
 
 <!-- ============ THE INFLECTION POINT — bg: ending (unchanged) ============ -->
-<section id="inflection" class="banner">
-  <div class="bg"><img src="media/ending.jpeg" alt="" /></div>
-  <div class="b-txt reveal">
-    <div class="kicker">The Inflection Point</div>
-    <h2 class="section-title">“If everything worked exactly as planned, you’re not doing enough.”</h2>
-    <p class="lead"><b>Paradox management</b> — control vs. autonomy, speed vs. fairness. Never solved, only continuously managed.</p>
-  </div>
-</section>
+<!-- #inflection section removed per request -->
 
 <div class="checkered-flag" aria-hidden="true"></div>
-<footer>
-  <div class="brand">Formula 1 · Leadership &amp; Teamwork</div>
-  <p>A visual case study adapted from “Formula 1: Unleashing the Greatest Racing Spectacle on the Planet,” Ben Shields &amp; Cate Reavis, MIT Sloan (2020).</p>
-  <p>Prepared for academic discussion. Imagery and footage used for educational purposes.</p>
-</footer>
+<!-- footer credits removed per request -->
 
 <script>
   const bar = document.getElementById('progress');
@@ -778,7 +767,6 @@
       { sel:'#heritage',    label:'Sector 6 — Heritage & Identity' },
       { sel:'#strategy',    label:'Sector 7 — Strategy & Trust' },
       { sel:'#lessons',     label:'Sector 8 — The Takeaways' },
-      { sel:'#inflection',  label:'Sector 9 — The Inflection Point' },
     ];
 
     const readout = document.getElementById('sector-readout');
